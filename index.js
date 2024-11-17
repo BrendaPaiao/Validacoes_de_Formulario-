@@ -154,7 +154,36 @@ function cadastroEmpresarial(req, resp) {
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="uf" class="form-label">UF</label>
-                            <input type="text" class="form-control" id="uf" name="uf" placeholder="Estado (UF)">
+                            <select class="form-select" id="uf" name="uf">
+                                <option value="" selected disabled>Selecione o estado</option>
+                                <option value="AC">Acre (AC)</option>
+                                <option value="AL">Alagoas (AL)</option>
+                                <option value="AP">Amapá (AP)</option>
+                                <option value="AM">Amazonas (AM)</option>
+                                <option value="BA">Bahia (BA)</option>
+                                <option value="CE">Ceará (CE)</option>
+                                <option value="DF">Distrito Federal (DF)</option>
+                                <option value="ES">Espírito Santo (ES)</option>
+                                <option value="GO">Goiás (GO)</option>
+                                <option value="MA">Maranhão (MA)</option>
+                                <option value="MT">Mato Grosso (MT)</option>
+                                <option value="MS">Mato Grosso do Sul (MS)</option>
+                                <option value="MG">Minas Gerais (MG)</option>
+                                <option value="PA">Pará (PA)</option>
+                                <option value="PB">Paraíba (PB)</option>
+                                <option value="PR">Paraná (PR)</option>
+                                <option value="PE">Pernambuco (PE)</option>
+                                <option value="PI">Piauí (PI)</option>
+                                <option value="RJ">Rio de Janeiro (RJ)</option>
+                                <option value="RN">Rio Grande do Norte (RN)</option>
+                                <option value="RS">Rio Grande do Sul (RS)</option>
+                                <option value="RO">Rondônia (RO)</option>
+                                <option value="RR">Roraima (RR)</option>
+                                <option value="SC">Santa Catarina (SC)</option>
+                                <option value="SP">São Paulo (SP)</option>
+                                <option value="SE">Sergipe (SE)</option>
+                                <option value="TO">Tocantins (TO)</option>
+                            </select>
                         </div>
                     </div>
                     <div class="row">
@@ -300,6 +329,8 @@ function menu(req, resp) {
         `);
 }
 
+let listaEmpresas = [];
+
 function cadastrarEmpresa(req, resp) {
 
     const cnpj = req.body.cnpj;
@@ -322,35 +353,43 @@ function cadastrarEmpresa(req, resp) {
                 <html>
                     <head>
                         <meta charset="utf-8">
-                        <title>Lista de Usuarios</title>
+                        <title>Lista de Empresas Cadastradas</title>
                         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
                         <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap" rel="stylesheet">
                         <style>
                             body {
-                                background-color: #BFBFBF;
+                                background-color: #333333;
                                 font-family: Arial, sans-serif;
+                                display: flex;
+                                flex-direction: column;
+                                min-height: 100vh;
                                 margin: 0;
-                                padding: 0;
                             }
 
                             .navbar {
-                                background-color: #BFBFBF;
+                                background-color: gray;
                                 box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); 
                             }
 
                             .navbar-brand, .nav-link {
                                 font-family: 'Cinzel', serif;
                                 font-weight: bold;
-                                color: #0A8081 !important;
+                                color: #D6C9B7 !important;
                             }
 
                             .navbar-brand:hover, .nav-link:hover {
-                                color: #066666 !important;
+                                color: white !important;
                             }
 
                             .container {
-                                max-width: 100%;
-                                padding: 20px;
+                                max-width: 90%;
+                                width: 90%;
+                                margin: 100px auto;
+                                padding: 30px;
+                                background-color: #E0DFD9;
+                                box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+                                border-radius: 10px;
+                                height: auto;
                             }
 
                             .table {
@@ -366,8 +405,13 @@ function cadastrarEmpresa(req, resp) {
                             }
 
                             .btn-primary {
-                                background-color: #0A8081;
-                                border-color: #0A8081;
+                                background-color: gray;
+                                border-color: #BFBFBF;
+                            }
+
+                            .btn-primary:hover {
+                                background-color: #D6C9B7;
+                                border-color: gray;
                             }
 
                             .container-actions {
@@ -384,13 +428,6 @@ function cadastrarEmpresa(req, resp) {
                                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                                     <span class="navbar-toggler-icon"></span>
                                 </button>
-                                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                                        <li class="nav-item">
-                                            <a class="nav-link active" aria-current="page" href="/cadastrar">Criar Conta</a>
-                                        </li>
-                                    </ul>
-                                </div>
                             </div>
                         </nav>
 
@@ -555,7 +592,7 @@ function cadastrarEmpresa(req, resp) {
         if (!cnpj) {
             resp.write(`
                     <div>
-                        <span><p class="text-danger">Por favor, você deve informar o nome do aluno!</p></span>
+                        <span><p class="text-danger">Por favor, informe o cnpj da empresa.</p></span>
                     </div>
                     `);
         }
@@ -568,7 +605,7 @@ function cadastrarEmpresa(req, resp) {
         if (!razaoSocial) {
             resp.write(`
                         <div>
-                            <span><p class="text-danger">Por favor, você deve informar o cnpj da empresa.</p></span>
+                            <span><p class="text-danger">Por favor, informe a razão social ou o nome do fornecedor da empresa.</p></span>
                         </div>
                         `);
         }
@@ -583,7 +620,7 @@ function cadastrarEmpresa(req, resp) {
         if (!nomeFantasia) {
             resp.write(`
                         <div>
-                            <span><p class="text-danger">Por favor, você deve informar o nome fantasia da empresa.</p></span>
+                            <span><p class="text-danger">Por favor, informe o nome fantasia da empresa.</p></span>
                         </div>
                         `);
         }
@@ -596,7 +633,7 @@ function cadastrarEmpresa(req, resp) {
         if (!email) {
             resp.write(`
                         <div>
-                            <span><p class="text-danger">Por favor, você deve informar o email de contato da empresa.</p></span>
+                            <span><p class="text-danger">Por favor, informe o email de contato da empresa.</p></span>
                         </div>
                         `);
         }
@@ -613,7 +650,7 @@ function cadastrarEmpresa(req, resp) {
         if (!telefone) {
             resp.write(`
                         <div>
-                            <span><p class="text-danger">Por favor, você deve informar o telefone da empresa.</p></span>
+                            <span><p class="text-danger">Por favor, informe o telefone da empresa.</p></span>
                         </div>
                         `);
         }
@@ -628,7 +665,7 @@ function cadastrarEmpresa(req, resp) {
         if (!endereco) {
             resp.write(`
                         <div>
-                            <span><p class="text-danger">Por favor, você deve informar o endereço da empresa.</p></span>
+                            <span><p class="text-danger">Por favor, informe o endereço da empresa.</p></span>
                         </div>
                         `);
         }
@@ -644,21 +681,71 @@ function cadastrarEmpresa(req, resp) {
         if (!cidade) {
             resp.write(`
                         <div>
-                            <span><p class="text-danger">Por favor, indique a cidade onde a empresa está situada.</p></span>
+                            <span><p class="text-danger">Por favor, informe a cidade onde a empresa está situada.</p></span>
                         </div>
                         `);
         }
+        
         resp.write(`
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="uf" class="form-label">UF</label>
-                            <input type="text" class="form-control" id="uf" name="uf" placeholder="Estado (UF)" value="${uf}">
+                            <select class="form-select" id="uf" name="uf">
+                        `);
+
+        const estados = [
+            { sigla: "AC", nome: "Acre (AC)" },
+            { sigla: "AL", nome: "Alagoas (AL)" },
+            { sigla: "AP", nome: "Amapá (AP)" },
+            { sigla: "AM", nome: "Amazonas (AM)" },
+            { sigla: "BA", nome: "Bahia (BA)" },
+            { sigla: "CE", nome: "Ceará (CE)" },
+            { sigla: "DF", nome: "Distrito Federal (DF)" },
+            { sigla: "ES", nome: "Espírito Santo (ES)" },
+            { sigla: "GO", nome: "Goiás (GO)" },
+            { sigla: "MA", nome: "Maranhão (MA)" },
+            { sigla: "MT", nome: "Mato Grosso (MT)" },
+            { sigla: "MS", nome: "Mato Grosso do Sul (MS)" },
+            { sigla: "MG", nome: "Minas Gerais (MG)" },
+            { sigla: "PA", nome: "Pará (PA)" },
+            { sigla: "PB", nome: "Paraíba (PB)" },
+            { sigla: "PR", nome: "Paraná (PR)" },
+            { sigla: "PE", nome: "Pernambuco (PE)" },
+            { sigla: "PI", nome: "Piauí (PI)" },
+            { sigla: "RJ", nome: "Rio de Janeiro (RJ)" },
+            { sigla: "RN", nome: "Rio Grande do Norte (RN)" },
+            { sigla: "RS", nome: "Rio Grande do Sul (RS)" },
+            { sigla: "RO", nome: "Rondônia (RO)" },
+            { sigla: "RR", nome: "Roraima (RR)" },
+            { sigla: "SC", nome: "Santa Catarina (SC)" },
+            { sigla: "SP", nome: "São Paulo (SP)" },
+            { sigla: "SE", nome: "Sergipe (SE)" },
+            { sigla: "TO", nome: "Tocantins (TO)" },
+        ];
+
+        for (let i = 0; i < estados.length; i++) {
+            const {sigla, nome} = estados[i];
+            if (sigla == uf) {
+                resp.write(`
+                    <option selected value="${sigla}">${nome}</option>
                 `);
+            }
+            else {
+                resp.write(`
+                    <option value="${sigla}">${nome}</option>    
+                `);
+            }
+
+        }
+
+        resp.write(`
+                </select>
+        `);
 
         if (!uf) {
             resp.write(`
                         <div>
-                            <span><p class="text-danger">Por favor, você deve informar o uf da empresa.</p></span>
+                            <span><p class="text-danger">Por favor, informe o uf da empresa.</p></span>
                         </div>
                         `);
         }
@@ -675,7 +762,7 @@ function cadastrarEmpresa(req, resp) {
         if (!cep) {
             resp.write(`
                         <div>
-                            <span><p class="text-danger">Por favor, você deve informar o cep da empresa.</p></span>
+                            <span><p class="text-danger">Por favor, informe o cep da empresa.</p></span>
                         </div>
                         `);
 
